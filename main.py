@@ -10,13 +10,16 @@ class Player(Turtle):
     self.goto(self.x, self.y)
     self.shape('turtle')
     self.color('purple')
-    screen.onkey(self.turnleft, left_key)
-    screen.onkey(self.turnright, right_key)
-    screen.onkey(self.fire, fire_key)
+    self.left_key = left_key
+    self.right_key = right_key
+    self.fire_key = fire_key
   def draw(self):
     self.pendown()
     self.penup()
   def update(self):
+    screen.onkey(self.turnleft, self.left_key)
+    screen.onkey(self.turnright, self.right_key)
+    screen.onkey(self.fire, self.fire_key)
     self.forward(5)
     if self.xcor() < -300 or self.xcor() > 300 or self.ycor() < -150 or self.ycor() > 150:
       self.right(180)
@@ -27,8 +30,6 @@ class Player(Turtle):
     self.right(10)
   def fire(self):
     bullets.append(Bullet(self.heading(), self.xcor(), self.ycor()))
-    
-
     
 class Prize(Turtle):
   def __init__(self):
@@ -55,7 +56,6 @@ class Prize(Turtle):
     self.y = deltay
     self.goto(self.x, self.y)
     self.pendown()
-    
   def respond(self):
     self.x = random.randrange(-300, 300)
     self.y = random.randrange(-150, 150)
@@ -64,7 +64,6 @@ class Prize(Turtle):
     self.pendown()
     zombies.append(Zombie(player1))
     zombies.append(Zombie(player2))
-    
     
 class Zombie(Turtle):
   def __init__(self, player):
@@ -86,6 +85,7 @@ class Zombie(Turtle):
 class Bullet(Turtle):
   def __init__(self, heading, x, y):
     super().__init__()
+    self.hideturtle()
     self.penup()
     self.goto(x, y)
     self.shape('circle')
@@ -93,22 +93,16 @@ class Bullet(Turtle):
     self.shapesize(.25,.25,.25)
     self.setheading(heading)
     self.pendown()
+    self.showturtle()
   def update(self):
     self.penup()
     self.forward(15)
     self.pendown()
     
-
 screen = Screen()
 screen.bgcolor('light blue')
-screen.setup(width = 600,height = 300, startx= 0, starty=0)
+screen.setup(width = 600, height = 300, startx= 0, starty=0)
 screen.listen()
-
-zombies = []
-bullets = []
-player1 = Player("a", "d", "w")
-player2 = Player("Left", "Right", "l")
-prize = Prize()
 
 def player1wins():
   text = Turtle()
@@ -116,6 +110,7 @@ def player1wins():
   text.hideturtle()
   text.goto(-150, 75)
   text.write("player 1 wins!", False, align = "left", font=("Arial", 18, "bold"))
+  screen.exitonclick()
 
 def player2wins():
   text = Turtle()
@@ -123,7 +118,13 @@ def player2wins():
   text.hideturtle()
   text.goto(-150, 75)
   text.write("player 2 wins!", False, align = "left", font=("Arial", 18, "bold"))
+  screen.exitonclick()
 
+zombies = []
+bullets = []
+player1 = Player("a", "d", "w")
+player2 = Player("Left", "Right", "l")
+prize = Prize()
 alive = True
 
 while alive:
@@ -163,6 +164,3 @@ while alive:
   prize.update()
   if player1.distance(prize) < 20 or player2.distance(prize) < 20:
     prize.respond()
-
-while True:
-  pass
